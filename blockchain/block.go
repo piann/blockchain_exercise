@@ -1,7 +1,9 @@
 package blockchain
 
 import (
+	"crypto/sha256"
 	"errors"
+	"fmt"
 
 	"github.com/piann/coin_101/db"
 	"github.com/piann/coin_101/utils"
@@ -41,7 +43,8 @@ func createBlock(data string, prevHash string, height int) *Block {
 		PrevHash: prevHash,
 		Height:   height,
 	}
-	//payload := block.Data + block.PrevHash + fmt.Sprint(block.Height)
+	payload := block.Data + block.PrevHash + fmt.Sprint(block.Height)
+	block.Hash = fmt.Sprintf("%x", sha256.Sum256([]byte(payload)))
 	block.persist()
 	return block
 }

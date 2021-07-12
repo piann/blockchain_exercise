@@ -1,8 +1,6 @@
 package db
 
 import (
-	"fmt"
-
 	"github.com/boltdb/bolt"
 	"github.com/piann/coin_101/utils"
 )
@@ -15,6 +13,10 @@ const (
 )
 
 var db *bolt.DB
+
+func Close() {
+	DB().Close()
+}
 
 func DB() *bolt.DB {
 	if db == nil { // init db
@@ -34,7 +36,6 @@ func DB() *bolt.DB {
 }
 
 func SaveBlock(hash string, data []byte) {
-	fmt.Printf("Saving Block: %s\nData: %b\n", hash, data)
 	err := DB().Update(func(t *bolt.Tx) error {
 		bucket := t.Bucket(([]byte(blocksBucket)))
 		err := bucket.Put([]byte(hash), data)

@@ -3,7 +3,7 @@ package cli
 import (
 	"flag"
 	"fmt"
-	"os"
+	"runtime"
 
 	"github.com/piann/coin_101/explorer"
 	"github.com/piann/coin_101/rest"
@@ -13,7 +13,7 @@ func usage() {
 	fmt.Println("Usage )")
 	fmt.Println("-port : Choose port number")
 	fmt.Println("-mode : Choose mode between REST 'rest' and 'html'")
-	os.Exit(0)
+	runtime.Goexit()
 }
 
 func Start() {
