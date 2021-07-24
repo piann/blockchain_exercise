@@ -8,13 +8,29 @@ import (
 	"github.com/piann/coin_101/utils"
 )
 
+const (
+	defaultDifficulty  int = 2
+	difficultyInterval int = 5
+)
+
 type blockchain struct {
-	NewestHash string `json:"newestHash"`
-	Height     int    `json:"Height"`
+	NewestHash        string `json:"newestHash"`
+	Height            int    `json:"Height"`
+	CurrentDifficulty int    `json:"currentDifficulty"`
 }
 
 var b *blockchain
 var once sync.Once
+
+func (b *blockchain) getDifficulty() int {
+	if b.Height == 0 {
+		return defaultDifficulty
+	} else if b.Height&difficultyInterval == 0 {
+		// caculate again !
+	} else {
+		return b.CurrentDifficulty
+	}
+}
 
 func (b *blockchain) restore(data []byte) {
 	utils.FromBytes(b, data)
@@ -49,7 +65,7 @@ func (b *blockchain) Blocks() []*Block {
 func Blockchain() *blockchain {
 	if b == nil {
 		once.Do(func() {
-			b = &blockchain{"", 0}
+			b = &blockchain{Height: 0}
 			// find check point on DB
 			checkpoint := db.Checkpoint()
 			if checkpoint == nil {
