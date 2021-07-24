@@ -62,7 +62,7 @@ func createBlock(data string, prevHash string, height int) *Block {
 		Hash:       "",
 		PrevHash:   prevHash,
 		Height:     height,
-		Difficulty: Blockchain().getDifficulty()
+		Difficulty: Blockchain().getDifficulty(),
 		Nonce:      0,
 	}
 

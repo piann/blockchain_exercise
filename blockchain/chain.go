@@ -27,6 +27,7 @@ func (b *blockchain) getDifficulty() int {
 		return defaultDifficulty
 	} else if b.Height&difficultyInterval == 0 {
 		// caculate again !
+		return b.CurrentDifficulty // temp logic
 	} else {
 		return b.CurrentDifficulty
 	}
