@@ -11,7 +11,7 @@ import (
 const (
 	defaultDifficulty          int = 2
 	difficultyRecheckInterval  int = 5
-	expectedMiningTimePerBlock int = 2
+	expectedMiningTimePerBlock int = 1
 	allowedRange               int = 1
 )
 
@@ -27,7 +27,7 @@ var once sync.Once
 func (b *blockchain) recalculateDifficulty() int {
 	allBlocks := b.Blocks()
 	newestBlock := allBlocks[0]
-	lastRecaculatedBlock := allBlocks[difficultyRecheckInterval]
+	lastRecaculatedBlock := allBlocks[difficultyRecheckInterval-1]
 	minuteGap := (newestBlock.Timestamp - lastRecaculatedBlock.Timestamp) / 60
 	expectedGap := difficultyRecheckInterval * expectedMiningTimePerBlock
 	if minuteGap < expectedGap-allowedRange {
