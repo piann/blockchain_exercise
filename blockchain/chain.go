@@ -98,3 +98,34 @@ func Blockchain() *blockchain {
 	fmt.Println(b.NewestHash)
 	return b
 }
+
+func (b *blockchain) txOuts() []*TxOut {
+	var txOuts []*TxOut
+	blocks := b.Blocks()
+	for _, block := range blocks {
+		for _, tx := range block.Transactions {
+			txOuts = append(txOuts, tx.TxOuts...)
+		}
+	}
+	return txOuts
+}
+
+func (b *blockchain) TxOutsByAddr(address string) []*TxOut {
+	var ownedTxOuts []*TxOut
+	txOuts := b.txOuts()
+	for _, txOut := range txOuts {
+		if txOut.Owner == address {
+			ownedTxOuts = append(ownedTxOuts, txOut)
+		}
+	}
+	return ownedTxOuts
+}
+
+func (b *blockchain) BalanceByAddr(address string) int {
+	txOuts := b.TxOutsByAddr(address)
+	var value int
+	for _, txOut := range txOuts {
+		value += txOut.Amount
+	}
+	return value
+}

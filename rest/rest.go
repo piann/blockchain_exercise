@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/piann/coin_101/blockchain"
+	"github.com/piann/coin_101/utils"
 )
 
 type url string
@@ -53,6 +54,11 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 			Method:      "GET",
 			Description: "Show the status of blockchain",
 		},
+		{
+			url:         url("/balance/{address}"),
+			Method:      "GET",
+			Description: "Show the transaction outputs owned by address",
+		},
 	}
 
 	json.NewEncoder(rw).Encode(data)
@@ -93,6 +99,18 @@ func status(rw http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(rw).Encode(blockchain.Blockchain())
 }
 
+func balance(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	addr := vars["address"]
+	utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.Blockchain().TxOutsByAddr(addr)))
+}
+
+func tbalance(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	addr := vars["address"]
+	utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.Blockchain().BalanceByAddr(addr)))
+}
+
 func Start(portNum int) {
 	router := mux.NewRouter()
 	router.Use(jsonContentTypeMiddleware)
@@ -100,6 +118,8 @@ func Start(portNum int) {
 	router.HandleFunc("/", documentation).Methods("GET")
 	router.HandleFunc("/blocks", blocks).Methods("GET", "POST")
 	router.HandleFunc("/blocks/{hash:[a-f0-9]+}", block).Methods("GET")
+	router.HandleFunc("/balance/{address}", balance).Methods("GET")
+	router.HandleFunc("/tbalance/{address}", tbalance).Methods("GET")
 	router.HandleFunc("/status", status).Methods("GET")
 	fmt.Printf("Rest : Listening on http://localhost%s\n", port)
 	log.Fatal(http.ListenAndServe(port, router))
