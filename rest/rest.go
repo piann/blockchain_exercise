@@ -31,6 +31,11 @@ type urlDescription struct {
 	Payload     string `json:"payload,omitempty"`
 }
 
+type balanceResponse struct {
+	Address string `json:"address"`
+	Balance int    `json:"balance"`
+}
+
 func documentation(rw http.ResponseWriter, r *http.Request) {
 	data := []urlDescription{
 		{
@@ -108,7 +113,8 @@ func balance(rw http.ResponseWriter, r *http.Request) {
 func tbalance(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	addr := vars["address"]
-	utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.Blockchain().BalanceByAddr(addr)))
+	totalBalance := blockchain.Blockchain().BalanceByAddr(addr)
+	utils.HandleErr(json.NewEncoder(rw).Encode(balanceResponse{addr, totalBalance}))
 }
 
 func Start(portNum int) {
