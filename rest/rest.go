@@ -8,16 +8,11 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/piann/coin_101/blockchain"
-	"github.com/piann/coin_101/utils"
 )
 
 type url string
 
 var port string
-
-type addBlockBody struct {
-	Message string
-}
 
 type errorResponse struct {
 	ErrorMessage string `json:"errorMessage"`
@@ -69,9 +64,7 @@ func blocks(rw http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(rw).Encode(blockchain.Blockchain().Blocks())
 
 	case "POST":
-		var addBlockBody addBlockBody
-		utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
-		blockchain.Blockchain().AddBlock(addBlockBody.Message)
+		blockchain.Blockchain().AddBlock()
 		rw.WriteHeader(http.StatusCreated)
 	}
 }
